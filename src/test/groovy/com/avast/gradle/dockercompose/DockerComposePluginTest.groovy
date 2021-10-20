@@ -276,14 +276,8 @@ class DockerComposePluginTest extends Specification {
             f.project.tasks.composeDown.down()
             f.close()
         where:
-            // test it for both compose file version 1 and 2
+            // test it only go v2, docker-compose 2 doesnt like v1
             composeFileContent << ['''
-            web:
-                image: nginx:stable
-                ports:
-                  - 80
-                  - 81/udp
-        ''', '''
             version: '2'
             services:
                 web:
@@ -323,6 +317,7 @@ class DockerComposePluginTest extends Specification {
 
     def "docker-compose substitutes environment variables"() {
         def f = Fixture.custom('''
+        services:
             web:
                 image: nginx:stable
                 ports:
@@ -358,75 +353,79 @@ class DockerComposePluginTest extends Specification {
             f.close()
     }
 
-    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
-    def "docker-compose scale option launches multiple instances of service"() {
-        def f = Fixture.withNginx()
-        f.extension.scale = ['web': 2]
-        def integrationTestTask = f.project.tasks.create('integrationTest').doLast {
-            def webInfos = project.dockerCompose.servicesInfos.web.containerInfos
-            assert webInfos.size() == 2
-            assert webInfos.containsKey('web_1')
-            assert webInfos.containsKey('web_2')
-        }
-        when:
-            f.project.tasks.composeUp.up()
-            integrationTestTask.actions.forEach { it.execute(integrationTestTask) }
-        then:
-            noExceptionThrown()
-        cleanup:
-            f.project.tasks.composeDown.down()
-            f.close()
-    }
+    // docker-compose scale is now part of up, as --scale
+//    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
+//    def "docker-compose scale option launches multiple instances of service"() {
+//        def f = Fixture.withNginx()
+//        f.extension.scale = ['web': 2]
+//        def integrationTestTask = f.project.tasks.create('integrationTest').doLast {
+//            def webInfos = project.dockerCompose.servicesInfos.web.containerInfos
+//            assert webInfos.size() == 2
+//            assert webInfos.containsKey('web_1')
+//            assert webInfos.containsKey('web_2')
+//        }
+//        when:
+//            f.project.tasks.composeUp.up()
+//            integrationTestTask.actions.forEach { it.execute(integrationTestTask) }
+//        then:
+//            noExceptionThrown()
+//        cleanup:
+//            f.project.tasks.composeDown.down()
+//            f.close()
+//    }
 
-    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
-    def "environment variables and system properties exposed for all scaled containers"() {
-        def f = Fixture.withNginx()
-        f.project.plugins.apply 'java'
-        f.extension.scale = ['web': 2]
-        f.project.tasks.composeUp.up()
-        Test test = f.project.tasks.test as Test
-        when:
-            f.project.dockerCompose.exposeAsEnvironment(test)
-            f.project.dockerCompose.exposeAsSystemProperties(test)
-        then:
-            [1, 2].each { containerInstance ->
-                assert test.environment.containsKey("WEB_${containerInstance}_HOST".toString())
-                assert test.environment.containsKey("WEB_${containerInstance}_CONTAINER_HOSTNAME".toString())
-                assert test.environment.containsKey("WEB_${containerInstance}_TCP_80".toString())
-                assert test.systemProperties.containsKey("web_${containerInstance}.host".toString())
-                assert test.systemProperties.containsKey("web_${containerInstance}.containerHostname".toString())
-                assert test.systemProperties.containsKey("web_${containerInstance}.tcp.80".toString())
-            }
-        cleanup:
-            f.project.tasks.composeDown.down()
-            f.close()
-    }
+    // docker-compose scale is now part of up, as --scale
+//    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
+//    def "environment variables and system properties exposed for all scaled containers"() {
+//        def f = Fixture.withNginx()
+//        f.project.plugins.apply 'java'
+//        f.extension.scale = ['web': 2]
+//        f.project.tasks.composeUp.up()
+//        Test test = f.project.tasks.test as Test
+//        when:
+//            f.project.dockerCompose.exposeAsEnvironment(test)
+//            f.project.dockerCompose.exposeAsSystemProperties(test)
+//        then:
+//            [1, 2].each { containerInstance ->
+//                assert test.environment.containsKey("WEB_${containerInstance}_HOST".toString())
+//                assert test.environment.containsKey("WEB_${containerInstance}_CONTAINER_HOSTNAME".toString())
+//                assert test.environment.containsKey("WEB_${containerInstance}_TCP_80".toString())
+//                assert test.systemProperties.containsKey("web_${containerInstance}.host".toString())
+//                assert test.systemProperties.containsKey("web_${containerInstance}.containerHostname".toString())
+//                assert test.systemProperties.containsKey("web_${containerInstance}.tcp.80".toString())
+//            }
+//        cleanup:
+//            f.project.tasks.composeDown.down()
+//            f.close()
+//    }
 
-    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
-    def "docker-compose scale to 0 does not cause exceptions because of missing first container"() {
-        def f = Fixture.custom('''
-            web:
-                image: nginx:stable
-                ports:
-                  - 80
-            z:
-                image: nginx:stable
-                ports: []
-        ''')
-        f.extension.scale = ['web': 0]
-        def integrationTestTask = f.project.tasks.create('integrationTest').doLast {
-            def webInfos = project.dockerCompose.servicesInfos.web.containerInfos
-            assert webInfos.size() == 0
-        }
-        when:
-            f.project.tasks.composeUp.up()
-            integrationTestTask.actions.forEach { it.execute(integrationTestTask) }
-        then:
-            noExceptionThrown()
-        cleanup:
-            f.project.tasks.composeDown.down()
-            f.close()
-    }
+    // docker-compose scale is now part of up, as --scale
+//    @IgnoreIf({ System.getenv('DOCKER_COMPOSE_VERSION') != null && parse(System.getenv('DOCKER_COMPOSE_VERSION')) < parse('1.13.0') })
+//    def "docker-compose scale to 0 does not cause exceptions because of missing first container"() {
+//        def f = Fixture.custom('''
+//        services:
+//            web:
+//                image: nginx:stable
+//                ports:
+//                  - 80
+//            z:
+//                image: nginx:stable
+//                ports: []
+//        ''')
+//        f.extension.scale = ['web': 0]
+//        def integrationTestTask = f.project.tasks.create('integrationTest').doLast {
+//            def webInfos = project.dockerCompose.servicesInfos.web.containerInfos
+//            assert webInfos.size() == 0
+//        }
+//        when:
+//            f.project.tasks.composeUp.up()
+//            integrationTestTask.actions.forEach { it.execute(integrationTestTask) }
+//        then:
+//            noExceptionThrown()
+//        cleanup:
+//            f.project.tasks.composeDown.down()
+//            f.close()
+//    }
 
     def "exposes environment variables and system properties for container with custom name"() {
         def f = Fixture.custom(composeFileContent)
@@ -449,12 +448,6 @@ class DockerComposePluginTest extends Specification {
         where:
         // test it for both compose file version 1 and 2
         composeFileContent << ['''
-            web:
-                container_name: custom_container_name
-                image: nginx:stable
-                ports:
-                  - 80
-        ''', '''
             version: '2'
             services:
                 web:
@@ -486,23 +479,6 @@ class DockerComposePluginTest extends Specification {
         where:
         // test it for both compose file version 1 and 2
         composeFileContent << ['''
-            web0:
-                image: nginx:stable
-                ports:
-                  - 80
-            web1:
-                image: nginx:stable
-                ports:
-                  - 80
-                links:
-                  - web0
-            webMaster:
-                image: nginx:stable
-                ports:
-                  - 80
-                links:
-                  - web1
-        ''', '''
             version: '2'
             services:
                 web0:

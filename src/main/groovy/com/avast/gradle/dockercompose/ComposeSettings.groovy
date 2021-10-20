@@ -93,15 +93,16 @@ abstract class ComposeSettings {
         this.customProjectName = customProjectName
         this.customProjectNameSet = true
     }
+    // docker-compose 2.0 apparently tolower's the project name when you first make it...
     String getProjectName() {
         if (customProjectNameSet) {
-            return customProjectName
+            return customProjectName.toLowerCase()
         }
         else if (projectNamePrefix) {
-            return "${projectNamePrefix}_${nestedName}"
+            return "${projectNamePrefix}_${nestedName}".toLowerCase()
         }
         else {
-            return "${safeProjectNamePrefix}_${nestedName}"
+            return "${safeProjectNamePrefix}_${nestedName}".toLowerCase()
         }
     }
     String projectNamePrefix
@@ -271,7 +272,7 @@ abstract class ComposeSettings {
     void exposeAsEnvironment(ProcessForkOptions task) {
         servicesInfos.values().each { serviceInfo ->
             serviceInfo.containerInfos.each { instanceName, si ->
-                if (instanceName.endsWith('_1')) {
+                if (instanceName.endsWith('_1') || instanceName.endsWith('-1')) {//docker-compose 2.0 uses dash instead of underscore
                     task.environment << createEnvironmentVariables(serviceInfo.name.toUpperCase(), si)
                 }
                 task.environment << createEnvironmentVariables(instanceName.toUpperCase(), si)
@@ -282,7 +283,7 @@ abstract class ComposeSettings {
     void exposeAsSystemProperties(JavaForkOptions task) {
         servicesInfos.values().each { serviceInfo ->
             serviceInfo.containerInfos.each { instanceName, si ->
-                if(instanceName.endsWith('_1')) {
+                if (instanceName.endsWith('_1') || instanceName.endsWith('-1')) {//docker-compose 2.0 uses dash instead of underscore
                     task.systemProperties << createSystemProperties(serviceInfo.name, si)
                 }
                 task.systemProperties << createSystemProperties(instanceName, si)

@@ -7,6 +7,23 @@ decisions made when forking this:
  * Not all features may work with all versions of docker-compose, we're focusing mostly on the `up` and `down` commands
  necessary to use docker-compose for some integration testing with existing docker images.
 
+Changes in docker-compose 2.0 that require changes in this plugin:
+ * The `docker-compose config` command will result in an error message and exit code of 15 if used on a v1 YAML file.
+ * The `-p` argument seems to be transformed to lower case in at least some commands, but not all. The plugin will now
+ automatically only pass a string already in lower case.
+ * The `docker-compose ps <service>` command will result in an error message an exist code of 1 if the service isn't
+ running, instead of returning an empty string.
+
+Test have been modified as well:
+ * The `scale` command no longer exists, rather than update the `up` task, tests are disabled for now.
+ * Some tests for yaml v1 have been disabled, others have been updated to use yaml v2.
+ * It appears that the output from some logs have changed slightly around line wraps in a single command, or else
+ docker-compose v2 is not correctly handling escaping in the service `command`, tests modified to be sure the log is
+ seen at all.
+
+Finally, sometimes it seems that tests do not finish properly, the `docker-compose logs -f` command does qnot exit when
+gradle asks it to after the container has stopped. This looks like a regression in docker-compose, and we have not
+investigated further.
 
 Original readme:
 

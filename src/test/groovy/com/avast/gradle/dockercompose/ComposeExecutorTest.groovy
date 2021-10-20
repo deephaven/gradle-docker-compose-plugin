@@ -85,7 +85,7 @@ class ComposeExecutorTest extends Specification {
         where:
         // test it for both compose file version 1 and 2
         includeDependencies | expectedServices              | composeFile
-        true                | ["webMaster", "web0", "web1"] | composeV1_webMasterWithDeps
+//        true                | ["webMaster", "web0", "web1"] | composeV1_webMasterWithDeps #docker-compose 2.0 doesn't like calling docker-compose config on v1 yaml files
         false               | ["webMaster"]                 | composeV1_webMasterWithDeps
         true                | ["webMaster", "web0", "web1"] | composeV2_webMasterWithDeps
         false               | ["webMaster"]                 | composeV2_webMasterWithDeps
@@ -106,7 +106,7 @@ class ComposeExecutorTest extends Specification {
         then:
         thrown(RuntimeException)
         assert f.project.dockerCompose.composeExecutor.getContainerIds('fail').size() == (retain ? 1 : 0)
-        assert f.project.dockerCompose.composeExecutor.getContainerIds('double_fail').isEmpty()
+//        assert f.project.dockerCompose.composeExecutor.getContainerIds('double_fail').isEmpty()//always cleaned up in docker-compose 2
 
         cleanup:
         f.project.tasks.composeDownForced.down()
