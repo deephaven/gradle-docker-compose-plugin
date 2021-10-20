@@ -1,3 +1,15 @@
+# This is a fork of [avast/gradle-docker-compose-plugin](https://github.com/avast/gradle-docker-compose-plugin) to add support for docker-compose v2.0
+
+At such a time that the upstream plugin supports docker-compose 2.0, this will probably be discontinued. A few other
+decisions made when forking this:
+
+ * No support for v1 yaml files, focusing only on v2 and v3
+ * Not all features may work with all versions of docker-compose, we're focusing mostly on the `up` and `down` commands
+ necessary to use docker-compose for some integration testing with existing docker images.
+
+
+Original readme:
+
 # gradle-docker-compose-plugin [![Build](https://github.com/avast/gradle-docker-compose-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/avast/gradle-docker-compose-plugin/actions/workflows/build.yml) [![Version](https://badgen.net/maven/v/maven-central/com.avast.gradle/gradle-docker-compose-plugin/)](https://repo1.maven.org/maven2/com/avast/gradle/gradle-docker-compose-plugin/)
 
 Simplifies usage of [Docker Compose](https://www.docker.com/docker-compose) for local development and integration testing in [Gradle](https://gradle.org/) environment.

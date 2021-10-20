@@ -11,7 +11,7 @@ apply plugin: 'maven-publish'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-group = 'com.avast.gradle'
+group = 'com.deephaven.gradle'
 archivesBaseName = 'gradle-docker-compose-plugin'
 version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
 
@@ -47,7 +47,7 @@ publishing {
             pom {
                 name = 'Gradle Docker Compose plugin'
                 description = 'Simplifies usage of Docker Compose for integration testing in Gradle environment.'
-                url = 'https://github.com/avast/gradle-docker-compose-plugin'
+                url = 'https://github.com/deephaven/gradle-docker-compose-plugin'
                 licenses {
                     license {
                         name = 'The MIT License'
@@ -62,9 +62,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/avast/gradle-docker-compose-plugin.git'
-                    developerConnection = 'scm:git:ssh://github.com/avast/gradle-docker-compose-plugin.git'
-                    url = 'https://github.com/avast/gradle-docker-compose-plugin'
+                    connection = 'scm:git:git://github.com/deephaven/gradle-docker-compose-plugin.git'
+                    developerConnection = 'scm:git:ssh://github.com/deephaven/gradle-docker-compose-plugin.git'
+                    url = 'https://github.com/deephaven/gradle-docker-compose-plugin'
                 }
             }
         }
@@ -89,13 +89,13 @@ nexusPublishing {
 project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
 project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
 pluginBundle {
-    website = 'https://github.com/avast/gradle-docker-compose-plugin'
-    vcsUrl = 'https://github.com/avast/gradle-docker-compose-plugin'
+    website = 'https://github.com/deephaven/gradle-docker-compose-plugin'
+    vcsUrl = 'https://github.com/deephaven/gradle-docker-compose-plugin'
     description = 'Simplifies usage of Docker Compose for integration testing in Gradle environment.'
     tags = ['docker', 'docker-compose', 'gradle']
     plugins {
         dockerComposePlugin {
-            id = 'com.avast.gradle.docker-compose'
+            id = 'com.deephaven.gradle.docker-compose'
             displayName = 'Gradle Docker Compose plugin'
         }
     }
