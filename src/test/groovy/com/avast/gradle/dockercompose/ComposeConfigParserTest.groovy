@@ -38,35 +38,36 @@ class ComposeConfigParserTest extends Specification
         dependenciesMap["slave1"].isEmpty()
     }
 
-    def "findServiceDependencies with a service two direct dependencies in version 1" ()
-    {
-
-        given: "compose config output for a service"
-        def configOutput = """
-        master:
-          links:
-            - slave0
-            - slave1
-        slave0:
-            expose:
-              - '22'
-        slave1:
-            expose:
-              - '23'
-        """
-
-        when: "findServiceDependencies is called"
-        def dependenciesMap = ComposeConfigParser.findServiceDependencies(configOutput)
-
-        then: "master has two dependencies"
-        dependenciesMap["master"] == ["slave0", "slave1"] as Set
-
-        and: "slave0 has no dependencies"
-        dependenciesMap["slave0"].isEmpty()
-
-        and: "slave1 has no dependencies"
-        dependenciesMap["slave1"].isEmpty()
-    }
+    //ignore yaml v1
+//    def "findServiceDependencies with a service two direct dependencies in version 1" ()
+//    {
+//
+//        given: "compose config output for a service"
+//        def configOutput = """
+//        master:
+//          links:
+//            - slave0
+//            - slave1
+//        slave0:
+//            expose:
+//              - '22'
+//        slave1:
+//            expose:
+//              - '23'
+//        """
+//
+//        when: "findServiceDependencies is called"
+//        def dependenciesMap = ComposeConfigParser.findServiceDependencies(configOutput)
+//
+//        then: "master has two dependencies"
+//        dependenciesMap["master"] == ["slave0", "slave1"] as Set
+//
+//        and: "slave0 has no dependencies"
+//        dependenciesMap["slave0"].isEmpty()
+//
+//        and: "slave1 has no dependencies"
+//        dependenciesMap["slave1"].isEmpty()
+//    }
 
     def "findServiceDependencies with a service 4 indirect dependencies in version 3" ()
     {
@@ -109,38 +110,39 @@ class ComposeConfigParserTest extends Specification
         dependenciesMap["dataService"] == ["db"] as Set
     }
 
-    def "findServiceDependencies with a service 4 indirect dependencies in version 1" ()
-    {
-        given: "compose config output for a service"
-        def configOutput = """
-              db:
-                expose:
-                  - 1414
-              splunkForward:
-                expose:
-                  - 8444
-              dataService:
-                links:
-                  - db
-                expose:
-                  - '8080'
-              audit:
-                links:
-                  - splunkForward
-              ui:
-                links:
-                  - dataService
-                  - audit
-                expose:
-                  - '23'
-        """
-
-        when: "findServiceDependencies is called"
-        def dependenciesMap = ComposeConfigParser.findServiceDependencies(configOutput)
-
-        then: "ui has 4 dependencies (audit, splunkForward, dataService, db)"
-        dependenciesMap["ui"] == ["audit", "splunkForward", "dataService", "db"] as Set
-    }
+    //ignore yaml v1
+//    def "findServiceDependencies with a service 4 indirect dependencies in version 1" ()
+//    {
+//        given: "compose config output for a service"
+//        def configOutput = """
+//              db:
+//                expose:
+//                  - 1414
+//              splunkForward:
+//                expose:
+//                  - 8444
+//              dataService:
+//                links:
+//                  - db
+//                expose:
+//                  - '8080'
+//              audit:
+//                links:
+//                  - splunkForward
+//              ui:
+//                links:
+//                  - dataService
+//                  - audit
+//                expose:
+//                  - '23'
+//        """
+//
+//        when: "findServiceDependencies is called"
+//        def dependenciesMap = ComposeConfigParser.findServiceDependencies(configOutput)
+//
+//        then: "ui has 4 dependencies (audit, splunkForward, dataService, db)"
+//        dependenciesMap["ui"] == ["audit", "splunkForward", "dataService", "db"] as Set
+//    }
 
     @Unroll
     def "calculateDependenciesFromGraph computes dependencies for #service" ()

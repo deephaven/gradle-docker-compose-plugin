@@ -10,6 +10,7 @@ class Fixture implements AutoCloseable {
 
     static withNginx() {
         new Fixture('''
+        services:
             web:
                 image: nginx:stable
                 command: bash -c "sleep 5 && nginx -g 'daemon off;'"
@@ -20,6 +21,7 @@ class Fixture implements AutoCloseable {
 
     static withHelloWorld() {
         new Fixture('''
+        services:
             hello:
                 image: hello-world
         ''')

@@ -10,9 +10,10 @@ import spock.lang.Specification
 class CaptureOutputTest extends Specification {
 
     private String composeFileContent = '''
+        services:
             web:
                 image: nginx:stable
-                command: bash -c "echo -e 'heres some output\\nand some more' && sleep 5 && nginx -g 'daemon off;'"
+                command: bash -c "echo -e 'heres some output' && sleep 5 && nginx -g 'daemon off;'"
                 ports:
                   - 80
         '''
@@ -34,7 +35,7 @@ class CaptureOutputTest extends Specification {
         f.project.tasks.composeUp.up()
         then:
         noExceptionThrown()
-        stdout.toString().contains("web_1  | heres some output\nweb_1  | and some more")
+        stdout.toString().contains('web_1  | heres some output') || stdout.toString().contains('web-1  | heres some output')
         cleanup:
         f.project.tasks.composeDown.down()
         f.close()
@@ -48,7 +49,7 @@ class CaptureOutputTest extends Specification {
         f.project.tasks.composeUp.up()
         then:
         noExceptionThrown()
-        logFile.text.contains("web_1  | heres some output\nweb_1  | and some more")
+        logFile.text.contains("web_1  | heres some output") || logFile.text.contains("web-1  | heres some output")
         cleanup:
         f.project.tasks.composeDown.down()
         f.close()
@@ -62,7 +63,7 @@ class CaptureOutputTest extends Specification {
         f.project.tasks.composeUp.up()
         then:
         noExceptionThrown()
-        logFile.text.contains("web_1  | heres some output\nweb_1  | and some more")
+        logFile.text.contains("web_1  | heres some output") || logFile.text.contains("web-1  | heres some output")
         cleanup:
         f.project.tasks.composeDown.down()
         f.close()
@@ -77,7 +78,7 @@ class CaptureOutputTest extends Specification {
         then:
         noExceptionThrown()
         def logFile = logDir.toPath().resolve('web.log').toFile()
-        logFile.text.contains("web_1  | heres some output\nweb_1  | and some more")
+        logFile.text.contains("web_1  | heres some output") || logFile.text.contains("web-1  | heres some output")
         cleanup:
         f.project.tasks.composeDown.down()
         f.close()

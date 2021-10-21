@@ -1,3 +1,32 @@
+# This is a fork of [avast/gradle-docker-compose-plugin](https://github.com/avast/gradle-docker-compose-plugin) to add support for docker-compose v2.0
+
+At such a time that the upstream plugin supports docker-compose 2.0, this will probably be discontinued. A few other
+decisions made when forking this:
+
+ * No support for v1 yaml files, focusing only on v2 and v3
+ * Not all features may work with all versions of docker-compose, we're focusing mostly on the `up` and `down` commands
+ necessary to use docker-compose for some integration testing with existing docker images.
+
+Changes in docker-compose 2.0 that require changes in this plugin:
+ * The `docker-compose config` command will result in an error message and exit code of 15 if used on a v1 YAML file.
+ * The `-p` argument seems to be transformed to lower case in at least some commands, but not all. The plugin will now
+ automatically only pass a string already in lower case.
+ * The `docker-compose ps <service>` command will result in an error message an exist code of 1 if the service isn't
+ running, instead of returning an empty string.
+
+Test have been modified as well:
+ * The `scale` command no longer exists, rather than update the `up` task, tests are disabled for now.
+ * Some tests for yaml v1 have been disabled, others have been updated to use yaml v2.
+ * It appears that the output from some logs have changed slightly around line wraps in a single command, or else
+ docker-compose v2 is not correctly handling escaping in the service `command`, tests modified to be sure the log is
+ seen at all.
+
+Finally, sometimes it seems that tests do not finish properly, the `docker-compose logs -f` command does qnot exit when
+gradle asks it to after the container has stopped. This looks like a regression in docker-compose, and we have not
+investigated further.
+
+Original readme:
+
 # gradle-docker-compose-plugin [![Build](https://github.com/avast/gradle-docker-compose-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/avast/gradle-docker-compose-plugin/actions/workflows/build.yml) [![Version](https://badgen.net/maven/v/maven-central/com.avast.gradle/gradle-docker-compose-plugin/)](https://repo1.maven.org/maven2/com/avast/gradle/gradle-docker-compose-plugin/)
 
 Simplifies usage of [Docker Compose](https://www.docker.com/docker-compose) for local development and integration testing in [Gradle](https://gradle.org/) environment.

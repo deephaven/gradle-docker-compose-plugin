@@ -17,7 +17,10 @@ class ComposeConfigParser
     {
         Map<String, Object> parsed = new Yaml().load(composeConfigOutput)
         // if there is 'version' on top-level then information about services is in 'services' sub-tree
-        Map<String, Object> services = (parsed.version ? parsed.services : parsed)
+
+        // docker-compose 2.0 change - there is no version any more in the config output, so assume always we read
+        // from services. Note that this means v1 yamls are no longer supported.
+        Map<String, Object> services = parsed.services
         Map<String, Set<String>> declaredServiceDependencies = services.collectEntries { [(it.key): getDirectServiceDependencies(it.value)] }
         services.keySet().collectEntries { [(it): calculateDependenciesFromGraph(it, declaredServiceDependencies)] }
     }

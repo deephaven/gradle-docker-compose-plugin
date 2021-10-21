@@ -62,6 +62,7 @@ class ComposeExecutor {
                 finalArgs.addAll(['-p', pn])
             }
             finalArgs.addAll(args)
+            println(finalArgs.toString())
             e.commandLine finalArgs
             if (os != null) {
                 e.standardOutput = os
@@ -73,7 +74,7 @@ class ComposeExecutor {
         }
         if (!ignoreExitValue && er.exitValue != 0) {
             def stdout = os != null ? os.toString().trim() : "N/A"
-            throw new RuntimeException("Exit-code ${er.exitValue} when calling ${settings.executable.get()}, stdout: $stdout")
+            throw new ComposeExecutionException("Exit-code ${er.exitValue} when calling ${settings.executable.get()}, stdout: $stdout")
         }
     }
 
@@ -100,7 +101,12 @@ class ComposeExecutor {
     }
 
     Iterable<String> getContainerIds(String serviceName) {
-        execute('ps', '-q', serviceName).readLines()
+        try {
+            execute('ps', '-q', serviceName).readLines()
+        } catch (ComposeExecutionException cliException) {
+            // docker-compose 2.0 fails rather than return empty
+            return Collections.emptySet();
+        }
     }
 
     void captureContainersOutput(Closure<Void> logMethod, String... services) {
